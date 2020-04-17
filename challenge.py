@@ -39,10 +39,11 @@ def main():
     values = readInput()
     logger.info("Values read: %s", values)
     
-    if values.__len__ == 0 or values.__len__ == 1:
-        logger.error("Mininum number of values was not given!!")
-        sys.exit(1)
-    elif values.__len__ == 2:
+    if len(values) == 0 or len(values)== 1:
+        msg = "Mininum number of values was not given!!"
+        logger.error(msg)
+        sys.stderr.write(msg)
+    elif len(values) == 2:
         logger.info("Only 2 number given, checking if either is a multiple of 3 to give response.")
         
         if values[0]%3 == 0 or values[1]%3 == 0:
@@ -51,15 +52,15 @@ def main():
             logger.info(result_str)
             sys.stdout.write(result_str)
         else:
-            logger.error("None of the 2 number were multiple of 3, no value can be give!!")
-            sys.exit(1)
+            msg = "None of the 2 number were multiple of 3, no value can be give!!"
+            logger.error(msg)
+            sys.stderr.write(msg)
     else:
         mult_values = getMultiplicationValues(values)
         mult_value_three = int(mult_values[0])
         
         if mult_value_three == 0:
             logger.error("None of the numbers were multiple of 3, no value can be give!!")
-            sys.exit(1)
         else:
             result = int(mult_values[0]) * int(mult_values[1])
             result_str = "Result: {}".format(result)
@@ -90,9 +91,11 @@ def getMultiplicationValues(valueArray):
     :returns: An tuple for which the first value is the greatest multiple of 3 in the valueArray and then the other greatest number.
     """
     
+    ## sort the array in reverse order (greater values first)
     sorted_array = sorted(valueArray,reverse=True)
     greatestMultipleThree = 0
     
+    ## since the array is already sorted from greatest to least the first multiple of 3 we find is the greater one
     for number in sorted_array :
         if number % 3 == 0:
             greatestMultipleThree = number
