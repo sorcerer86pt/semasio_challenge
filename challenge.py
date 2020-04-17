@@ -91,7 +91,11 @@ def getMultiplicationValues(valueArray):
 
     :param valueArray: An array of numbers from we need to get the values
     :returns: An tuple for which the first value is the greatest multiple of 3 in the valueArray and then the other greatest number.
+    :raises: ValueError if insufficient values in array are passed.
     """
+
+    if (len(valueArray) == 0 or len(valueArray) == 1):
+        raise ValueError("Insufficient number of values")
 
     # sort the array in reverse order (greater values first)
     sorted_array = sorted(valueArray, reverse=True)

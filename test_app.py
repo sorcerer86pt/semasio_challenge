@@ -1,4 +1,5 @@
 from challenge import getMultiplicationValues
+import pytest
 
 
 def test_sample_array():
@@ -19,3 +20,8 @@ def test_third_sample_array():
     mult_values = getMultiplicationValues(numbers)
     assert (int(mult_values[0])) == 6
     assert (int(mult_values[1])) == 5
+    
+def test_raise_exception_if_not_enough_numbers():
+    with pytest.raises(ValueError):
+        numbers = [1]
+        getMultiplicationValues(numbers)
