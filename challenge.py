@@ -8,8 +8,6 @@ program_description = 'This program will given an number array return , \
 find the maximum product between two numbers from the array, that is a multiple of 3.'
 version = "0.0.1"
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
