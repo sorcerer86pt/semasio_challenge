@@ -92,26 +92,42 @@ def getMultiplicationValues(valueArray):
     :raises: ValueError if insufficient values in array are passed.
     """
 
-    if len(valueArray) <=2:
+    # Greatest number that is divisible by 3
+    max_divisible_3 = -1
+    # Greatest number aside from max_divisible_3
+    max_otherwise = -1
+
+    if len(valueArray) <= 2:
         raise ValueError("Insufficient number of values")
 
-    # sort the array in reverse order (greater values first)
-    sorted_array = sorted(valueArray, reverse=True)
-    greatestMultipleThree = 0
+    """
+        Go for each number in the array
+        If the number is divisible by 3 and is greater than max_divisible_3 then we update max_divisible_3
+         Special consideration must be made to also update max_otherwise with the old max_divisible_3 if it is greater that the actual max_otherwise, for the case when 3 numbers that are divisoble by 3 are the greatest. 
+         Otherwise if the number is just greater than max_otherwise, we update it
+        At the end we get the max number that is divisible by 3 and the other maximun value
+        This guarantees that the resulting number that is obtained by multiplying this number is the greatest number that can be obtained that is a multiple of 3 
+        Since we only do 1 array pass, this results in a O(N) complexity algorithm
+    """
 
-    # since the array is already sorted from greatest to least the first multiple of 3 we find is the greater one
-    for number in sorted_array:
-        if number % 3 == 0:
-            greatestMultipleThree = number
-            break
+    for value in valueArray:
+        logger.info("Checking value %d", value)
+        if value % 3 == 0 and value > max_divisible_3:
+            old_multiple_3 = max_divisible_3
+            max_divisible_3 = value
+            logger.info("Changed max divisible multiple of 3 to %d",
+                        max_divisible_3)
 
-    # After getting the greatest number that is already a multiple of 3, remove it from the array
-    # so that in the next step, we don't by mistake or happenstance return it at the second value in
-    # the tuple
-    if greatestMultipleThree > 0:
-        sorted_array.remove(greatestMultipleThree)
+            # check if the previous  max_divisble_3 is greater than max_othewise and update it with old max_divisible_3
+            # This avoids the problem of having 2 multiples of 3 that are also the greatest values not being used
+            if (old_multiple_3 > max_otherwise):
+                max_otherwise = old_multiple_3
+        elif value > max_otherwise:
+            max_otherwise = value
+            logger.info(
+                "Change max value not divisible to 3 to %d", max_otherwise)
 
-    return (greatestMultipleThree, sorted_array[0])
+    return(max_divisible_3, max_otherwise)
 
 
 if __name__ == "__main__":

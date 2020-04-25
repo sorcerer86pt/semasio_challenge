@@ -1,4 +1,4 @@
-from challenge import getMultiplicationValues
+from challenge_O_N import getMultiplicationValues
 import pytest
 
 
@@ -20,6 +20,7 @@ def test_third_sample_array():
     mult_values = getMultiplicationValues(numbers)
     assert (int(mult_values[0])) == 6
     assert (int(mult_values[1])) == 5
+    
     
 def test_two_multiple_three_greatest_values():
     numbers = [6, 4, 5, 1, 9]
