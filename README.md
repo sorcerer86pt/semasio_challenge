@@ -8,5 +8,5 @@ The result for the input {6,8,8,7,2,5} should be 48 = 6 x 8. Note that 8 x 8 is 
 Given the input {1,9,2,4} the result should be  36 = 9 x 4, and not 81 (9 x 9) since you shouldn't multiply a number by itself.
 
 
-Simple Version: challenge.py
-Version with O(N) algorithm: challenge_O_N.py
+- Simple Version: challenge.py
+- Version with O(N) algorithm: challenge_O_N.py
