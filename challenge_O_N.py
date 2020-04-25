@@ -1,6 +1,9 @@
 import argparse
 import sys
 import logging
+import logging.config
+import os
+import json
 
 
 # some helper constants
@@ -9,20 +12,23 @@ find the maximum product between two numbers from the array, that is a multiple 
 version = "0.0.1"
 
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+def setup_logging(
+        default_path='logging.json',
+        default_level=logging.INFO,
+        env_key='LOG_CFG'):
+    """Setup logging configuration
 
-# create a file handler
-handler = logging.FileHandler('program.log')
-handler.setLevel(logging.INFO)
-
-# create a logging format
-formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-
-# add the file handler to the logger
-logger.addHandler(handler)
+    """
+    path = default_path
+    value = os.getenv(env_key, None)
+    if value:
+        path = value
+    if os.path.exists(path):
+        with open(path, 'rt') as f:
+            config = json.load(f)
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=default_level)
 
 
 def preparaParser():
@@ -36,8 +42,10 @@ def preparaParser():
 
 
 def main():
+    setup_logging()
     preparaParser()
     values = readInput()
+    logger = logging.getLogger(__name__)
     logger.info("Values read: %s", values)
 
     if len(values) == 0 or len(values) == 1:
@@ -66,7 +74,7 @@ def main():
                 "None of the numbers were multiple of 3, no value can be give!!")
         else:
             result = int(mult_values[0]) * int(mult_values[1])
-            result_str = "Result: {}".format(result)
+            result_str = "Result: {value}".format(value=result)
             logger.info(result_str)
             sys.stdout.write(result_str)
 
@@ -91,7 +99,10 @@ def getMultiplicationValues(valueArray):
     :returns: An tuple for which the first value is the greatest multiple of 3 in the valueArray and then the other greatest number.
     :raises: ValueError if insufficient values in array are passed.
     """
+    logger = logging.getLogger("Mul_function")
 
+    logger.debug("--- New verification. ---")
+    logger.debug("Values: {}", valueArray)
     # Greatest number that is divisible by 3
     max_divisible_3 = -1
     # Greatest number aside from max_divisible_3
@@ -115,17 +126,18 @@ def getMultiplicationValues(valueArray):
         if value % 3 == 0 and value > max_divisible_3:
             old_multiple_3 = max_divisible_3
             max_divisible_3 = value
-            logger.info("Changed max divisible multiple of 3 to %d",
-                        max_divisible_3)
-
+            logger.info("Updating max_divisible_3 value")
             # check if the previous  max_divisble_3 is greater than max_othewise and update it with old max_divisible_3
             # This avoids the problem of having 2 multiples of 3 that are also the greatest values not being used
             if (old_multiple_3 > max_otherwise):
                 max_otherwise = old_multiple_3
+                logger.info(
+                    "Update the value of max_otherwise with the old max_divisible_3")
         elif value > max_otherwise:
             max_otherwise = value
-            logger.info(
-                "Change max value not divisible to 3 to %d", max_otherwise)
+            logger.info("Updated max_otherwise value")
+        logger.debug(
+            "Current values: max_divisible_3 : [{}], max_otherwise: [{}]", max_divisible_3, max_otherwise)
 
     return(max_divisible_3, max_otherwise)
 

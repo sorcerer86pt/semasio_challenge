@@ -1,6 +1,9 @@
 import argparse
 import sys
 import logging
+import logging.config
+import json
+import os
 
 
 # some helper constants
@@ -9,23 +12,26 @@ find the maximum product between two numbers from the array, that is a multiple 
 version = "0.0.1"
 
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+def setup_logging(
+        default_path='logging.json',
+        default_level=logging.INFO,
+        env_key='LOG_CFG'):
+    """Setup logging configuration
 
-# create a file handler
-handler = logging.FileHandler('program.log')
-handler.setLevel(logging.INFO)
+    """
+    path = default_path
+    value = os.getenv(env_key, None)
+    if value:
+        path = value
+    if os.path.exists(path):
+        with open(path, 'rt') as f:
+            config = json.load(f)
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=default_level)
 
-# create a logging format
-formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
 
-# add the file handler to the logger
-logger.addHandler(handler)
-
-
-def preparaParser():
+def prepareParser():
     parser = argparse.ArgumentParser(description=program_description)
     parser.add_argument("-V", "--version",
                         help="Show Program version", action="store_true")
@@ -36,11 +42,13 @@ def preparaParser():
 
 
 def main():
-    preparaParser()
+    setup_logging()
+    logger = logging.getLogger(__name__)
+    prepareParser()
     values = readInput()
     logger.info("Values read: %s", values)
 
-    if len(values) == 0 or len(values) == 1:
+    if len(values) < 2:
         msg = "Mininum number of values was not given!!"
         logger.error(msg)
         sys.stderr.write(msg)
@@ -91,12 +99,17 @@ def getMultiplicationValues(valueArray):
     :returns: An tuple for which the first value is the greatest multiple of 3 in the valueArray and then the other greatest number.
     :raises: ValueError if insufficient values in array are passed.
     """
+    logger = logging.getLogger("MUL_FUNCTION")
 
-    if len(valueArray) <=2:
+    logger.debug("--- New verification. ---")
+    logger.debug("Values: {}", valueArray)
+
+    if len(valueArray) <= 2:
         raise ValueError("Insufficient number of values")
 
     # sort the array in reverse order (greater values first)
     sorted_array = sorted(valueArray, reverse=True)
+    logger.info("Sorted Array: {}".format( sorted_array))
     greatestMultipleThree = 0
 
     # since the array is already sorted from greatest to least the first multiple of 3 we find is the greater one
